@@ -1,0 +1,4 @@
+*.o
+app
+*.sublime-workspace
+*.sublime-project

@@ -1,0 +1,65 @@
+This shows what possible patterns (also called rules) can be made with each level. It is absolutely acceptable to look at this while playing. Even level 1 can generate 70 different rules!
+That being said, if you don't want to look at this document, that is fine.
+
+It is NOT a "how to play" document; see README.md for that.
+
+Here, the letters W,X,Y,Z refer to different game letters (AEIOU). So "more X than Y" means one of the 20 rules "more A than E", "more A than I", etc.
+
+Remember that "more" is always strict, meaning a tie is considered negative. "More A than E" would classify AEAEAE, which has three of each, as negative.
+
+The examples also show how you would enter such a thing into the parser, without the quotes of course. Often there are different ways of expressing a rule and you will be given credit for anything that is equivalent: 
+
+===== LEVEL 1 =====
+- At least [1-3] X (e.g. "at least 2 E". At least 1 can also be written as "some E".)
+- Exactly [1-3] X (e.g. "exactly 2 E". A word with three or more E's would be negative with this one.)
+- At most [1-3] X (e.g. "at most 2 E". Note this means there could be zero E's, or one, or two, but not three or more.)
+- At least one XY (e.g. "some OI". So EOIE and AOIOI would be positive but OEI and IOA would be negative.)
+- At least one XX (e.g. "some UU"). This is different from level 2's double letter rule in that it asks for a *specific* double letter. For "some UU", "EUUEU" is positive but "UAU" is negative.)
+
+===== LEVEL 2 =====
+- X appears more often than Y (e.g. "more I than A")
+- contains X or Y (e.g. "some E or some U". Note that having both is allowed.)
+- contains X and Y (e.g. "some E and some U". Here, it *has to* have both.)
+- contains X but not Y (e.g. "some E and no U")
+- contains either XY or YX (e.g. "some OI or some IO". Again, it could have both.)
+- contains neither XY nor YX (e.g. "no OI and no IO". Pay attention to AND vs OR here.)
+- contains a double letter (like "II" or "AEEUA", but "IOI" would not count) or contains no double letters (e.g. "some 11" or "no 11"; here the 1 is a wildcard digit that stands for any letter in the game).
+
+===== LEVEL 3 =====
+- XY appears more often than XZ ("more AE than AO")
+- YX appears more often than ZX ("more IA than UA")
+- An odd number of X (e.g. "an odd number of E")
+- An even number of X (e.g. "an even number of I". Note that zero is even, so both IOI and UE would be positive.)
+- The number of X's is in some range (the possible ranges are 1 to 2, 1 to 3, and 2 to 3). Example: "at least 1 A and at most 3 A".
+- Contains either X or Y, but absolutely no Z (e.g. "(some A or some E) and no U". Notice the parentheses; these are required because "some A or (some E and no U)" is a different rule entirely. The former classifies AU as negative, but the latter marks it positive.)
+- Contains X but no Y and no Z (e.g. "some A and no U and no I". Here, since everything is "and" there is no need for parentheses.)
+- More of XY than YX (e.g. "more AO than OA"; would label AOAO as positive but AOAOA as negative because it has two of each.)
+- More X than Y and more Y than Z (e.g. "more A than E and more E than I". Keep in mind that zero is NOT greater than zero, so there will necessarily be at least two X's and at least one Y.)
+- Contains an X strictly before a Y (e.g. "some I*E". The * stands for any series of letters or none at all. Note that EIEI would be positive because the first I is before the second E; IAAAAE would also be positive. As of now, the actual words "before" and "after" are not recognized.)
+
+===== LEVEL 4 =====
+- More W than X or more Y than Z (e.g. "more A than U or more I than O". All four letters used in this rule will be different.)
+- More W than X and more Y than Z (e.g. "more A than U and more I than O")
+- Contains X at a distance of 2 from Y (e.g. "some O?E or some E?O". The question mark represents any single letter.)
+- Contains X at a distance of 3 from Y (e.g. "some O??E or some E??O")
+- Contains some X before a Y, where no X-before-Y pair has a Z between (e.g. "some A*I and no A*E*I". Note that even a string like AIAEI will be negative.)
+- Or, the game will select two rules in the 1-2 range and combine them using either "and" or "or". One example: "at least 2 E and (some I or some U)". Again, note the parentheses; never mix "and" with "or"!
+	- But "at least 2 E or some I or some U" is valid.
+
+===== LEVEL 5 =====
+These rules are extremely unstable, because they are a blind combination of two to four simpler rules. The process generates a set of "mini-rules" with the following conditions:
+(1) Each mini-rule is a rule from levels 1 through 4.
+(2) The sum of the levels of the rules is no larger than 6. (It will not, for instance, generate a level 3 and two level 2's, since that adds to 7.)
+(3) There are no more than four total rules (there can be as few as two).
+
+The level 5 rule will either require that the string satisfies at least one mini-rule, or that it satisfies all of them.
+
+Example:
+"more AE than AO and an odd number of E" (3 and 3)
+"an even number of I and (some I or some U) and at most 1 A" (3 and 2 and 1)
+
+I said the combination is "blind". This is because the mini-rules are generated independently and often they are somewhat redundant. Consider:
+"more OI than OE and some AE and some O and at least 3 U" (levels: 3, 1, 1, 1)
+The third mini-rule, "some O", is entirely redundant. Since there must be more OI than OE, there have to be some OI's, which forces there to be an O. Also, the maximum length is 8 letters. Three of these must be taken up by the U's, and four more must come from an AE and an OI. With only one letter left, there is no room for OE (it can't use part of the AE or the OI without disrupting them) or a second AE or OI. So, "exactly 1 OI and exactly 1 AE and at least 3 U" would actually be a winning guess.
+
+There are even weirder examples too, but that should suffice. In theory, you might be able to win with "at least 1 A" if the rule is a logical OR of that rule (level 1) and other things that all require A's, although the chance of this happening is small. But it is a possibility.
